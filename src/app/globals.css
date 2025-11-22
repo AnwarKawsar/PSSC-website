@@ -4,16 +4,16 @@
   /* Sci-Fi Palette */
   --background: #030014;
   --foreground: #ffffff;
-  
+
   --color-primary: #00f3ff;
   --color-primary-foreground: #000000;
-  
+
   --color-secondary: #bc13fe;
   --color-secondary-foreground: #ffffff;
-  
+
   --color-accent: #2d5af5;
   --color-accent-foreground: #ffffff;
-  
+
   --color-card: rgba(255, 255, 255, 0.05);
   --color-card-foreground: #ffffff;
 
@@ -32,7 +32,7 @@
   --color-accent-foreground: var(--color-accent-foreground);
   --color-card: var(--color-card);
   --color-card-foreground: var(--color-card-foreground);
-  
+
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
 
@@ -40,15 +40,29 @@
   --animate-glow: glow 2s ease-in-out infinite alternate;
 
   @keyframes glow {
-    0% { box-shadow: 0 0 5px #00f3ff, 0 0 10px #00f3ff; }
-    100% { box-shadow: 0 0 20px #00f3ff, 0 0 30px #00f3ff; }
+    0% {
+      filter: drop-shadow(0 0 2px #00f3ff);
+    }
+
+    100% {
+      filter: drop-shadow(0 0 8px #00f3ff);
+    }
   }
-  
+
   @keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-    100% { transform: translateY(0px); }
+    0% {
+      transform: translateY(0px);
+    }
+
+    50% {
+      transform: translateY(-10px);
+    }
+
+    100% {
+      transform: translateY(0px);
+    }
   }
+
   --animate-float: float 3s ease-in-out infinite;
 }
 
@@ -72,4 +86,3 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
-
