@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 
@@ -18,6 +19,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [session, setSession] = useState<Session | null>(null);
     const [loading, setLoading] = useState(true);
+    const router = useRouter();
 
     useEffect(() => {
         // Check active sessions and sets the user
@@ -31,14 +33,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         getSession();
 
         // Listen for changes on auth state (logged in, signed out, etc.)
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
             setSession(session);
             setUser(session?.user ?? null);
             setLoading(false);
+
+            if (event === "PASSWORD_RECOVERY") {
+                router.push("/dashboard/reset-password");
+            }
         });
 
         return () => subscription.unsubscribe();
-    }, []);
+    }, [router]);
 
     const signInWithGoogle = async () => {
         await supabase.auth.signInWithOAuth({
