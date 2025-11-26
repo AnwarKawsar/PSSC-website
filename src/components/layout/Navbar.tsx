@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Menu, X, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { Button } from "@/components/ui/Button";
 
 const navItems = [
     { name: "Home", href: "/" },
@@ -43,12 +44,9 @@ export function Navbar() {
                                     <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
                                 </Link>
                             ))}
-                            <Link
-                                href="/login"
-                                className="px-4 py-2 rounded-md bg-primary/10 border border-primary/50 text-primary hover:bg-primary hover:text-black transition-all duration-300 shadow-[0_0_10px_rgba(0,243,255,0.2)] hover:shadow-[0_0_20px_rgba(0,243,255,0.5)]"
-                            >
+                            <Button href="/login" variant="outline">
                                 Login
-                            </Link>
+                            </Button>
                         </div>
                     </div>
 

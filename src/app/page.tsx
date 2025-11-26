@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, Code, Users, Award, Terminal } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 
 export default function Home() {
   return (
@@ -38,22 +39,15 @@ export default function Home() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
-            <Link
-              href="/signup"
-              className="group relative px-8 py-4 text-lg font-bold text-black bg-primary rounded-full overflow-hidden transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(0,243,255,0.4)]"
-            >
+            <Button href="/signup" size="lg" className="group">
               <span className="relative z-10 flex items-center">
                 Join the Club <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </span>
-              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-            </Link>
+            </Button>
 
-            <Link
-              href="/events"
-              className="px-8 py-4 text-lg font-bold text-white border border-white/20 rounded-full hover:bg-white/5 hover:border-primary/50 transition-all"
-            >
+            <Button href="/events" variant="outline" size="lg">
               Explore Events
-            </Link>
+            </Button>
           </div>
         </motion.div>
       </section>
