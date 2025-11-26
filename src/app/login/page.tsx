@@ -6,6 +6,7 @@ import { Lock, Mail, Key, ArrowRight, Github } from "lucide-react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/Button";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
@@ -79,16 +80,22 @@ export default function LoginPage() {
                                 required
                             />
                         </div>
+                        <div className="flex justify-end mt-1">
+                            <Link href="/forgot-password" className="text-xs text-primary/80 hover:text-primary hover:underline transition-colors">
+                                Forgot Password?
+                            </Link>
+                        </div>
                     </div>
 
-                    <button
+                    <Button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-primary text-black font-bold py-3 rounded-lg hover:bg-primary/90 transition-all flex items-center justify-center group"
+                        className="w-full"
+                        isLoading={loading}
                     >
-                        {loading ? "Authenticating..." : "Initialize Session"}
+                        Initialize Session
                         {!loading && <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />}
-                    </button>
+                    </Button>
                 </form>
 
                 <div className="mt-8 pt-6 border-t border-white/10 text-center">
