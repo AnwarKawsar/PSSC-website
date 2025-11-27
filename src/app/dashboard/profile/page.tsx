@@ -5,18 +5,66 @@ import { motion } from "framer-motion";
 import { User, Mail, Phone, MapPin, Save, Camera } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/lib/supabase";
 
 export default function ProfilePage() {
     const { user } = useAuth();
     const [loading, setLoading] = useState(false);
+    const [uploading, setUploading] = useState(false);
+    const [fullName, setFullName] = useState(user?.user_metadata?.full_name || "");
+    const [avatarUrl, setAvatarUrl] = useState(user?.user_metadata?.avatar_url || "");
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        setLoading(false);
-        alert("Profile updated successfully!");
+
+        try {
+            const { error } = await supabase.auth.updateUser({
+                data: { full_name: fullName, avatar_url: avatarUrl }
+            });
+
+            if (error) throw error;
+            alert("Profile updated successfully!");
+        } catch (error) {
+            alert("Error updating profile: " + (error as Error).message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        try {
+            setUploading(true);
+            if (!e.target.files || e.target.files.length === 0) {
+                throw new Error("You must select an image to upload.");
+            }
+
+            const file = e.target.files[0];
+            const fileExt = file.name.split(".").pop();
+            const fileName = `${user?.id}-${Math.random()}.${fileExt}`;
+            const filePath = `${fileName}`;
+
+            const { error: uploadError } = await supabase.storage
+                .from("avatars")
+                .upload(filePath, file);
+
+            if (uploadError) {
+                throw uploadError;
+            }
+
+            const { data } = supabase.storage.from("avatars").getPublicUrl(filePath);
+            setAvatarUrl(data.publicUrl);
+
+            // Auto-save the new avatar URL to user metadata
+            await supabase.auth.updateUser({
+                data: { avatar_url: data.publicUrl }
+            });
+
+        } catch (error) {
+            alert("Error uploading avatar: " + (error as Error).message);
+        } finally {
+            setUploading(false);
+        }
     };
 
     return (
@@ -36,11 +84,27 @@ export default function ProfilePage() {
                     <div className="flex items-center space-x-6">
                         <div className="relative group cursor-pointer">
                             <div className="w-24 h-24 rounded-full bg-primary/20 flex items-center justify-center border-2 border-primary/50 overflow-hidden">
-                                <User className="w-12 h-12 text-primary" />
+                                {avatarUrl ? (
+                                    <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                                ) : (
+                                    <User className="w-12 h-12 text-primary" />
+                                )}
                             </div>
-                            <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <label className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
                                 <Camera className="w-6 h-6 text-white" />
-                            </div>
+                                <input
+                                    type="file"
+                                    className="hidden"
+                                    accept="image/*"
+                                    onChange={handleAvatarUpload}
+                                    disabled={uploading}
+                                />
+                            </label>
+                            {uploading && (
+                                <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full">
+                                    <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                </div>
+                            )}
                         </div>
                         <div>
                             <h3 className="text-lg font-medium text-white">Profile Picture</h3>
@@ -55,7 +119,8 @@ export default function ProfilePage() {
                                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
                                 <input
                                     type="text"
-                                    defaultValue={user?.user_metadata?.full_name || ""}
+                                    value={fullName}
+                                    onChange={(e) => setFullName(e.target.value)}
                                     className="w-full bg-black/20 border border-white/10 rounded-lg py-2.5 pl-10 pr-4 text-white focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50"
                                 />
                             </div>
