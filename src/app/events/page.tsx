@@ -1,45 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Calendar, MapPin, Clock, Tag, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
-const events = [
-    {
-        id: 1,
-        title: "AI & Machine Learning Workshop",
-        date: "Oct 15, 2025",
-        time: "10:00 AM - 2:00 PM",
-        location: "Tech Hub, Room 301",
-        category: "Technical",
-        image: "bg-gradient-to-br from-blue-600 to-purple-600",
-        description: "Dive deep into neural networks and build your first ML model."
-    },
-    {
-        id: 2,
-        title: "Public Speaking Masterclass",
-        date: "Oct 20, 2025",
-        time: "3:00 PM - 5:00 PM",
-        location: "Auditorium B",
-        category: "Soft Skills",
-        image: "bg-gradient-to-br from-pink-500 to-orange-400",
-        description: "Overcome stage fright and deliver impactful presentations."
-    },
-    {
-        id: 3,
-        title: "Cybersecurity Essentials",
-        date: "Nov 05, 2025",
-        time: "11:00 AM - 1:00 PM",
-        location: "Cyber Lab",
-        category: "Technical",
-        image: "bg-gradient-to-br from-green-500 to-teal-500",
-        description: "Learn how to protect systems from modern threats."
-    },
-];
+import { supabase } from "@/lib/supabase";
+
+// Removed mock events array
 
 export default function EventsPage() {
+    const [events, setEvents] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState("All");
+
+    useEffect(() => {
+        const fetchEvents = async () => {
+            const { data, error } = await supabase.from('events').select('*');
+            if (error) {
+                console.error('Error fetching events:', error);
+            } else {
+                setEvents(data || []);
+            }
+            setLoading(false);
+        };
+        fetchEvents();
+    }, []);
 
     const filteredEvents = filter === "All"
         ? events
@@ -69,8 +55,8 @@ export default function EventsPage() {
                                 key={cat}
                                 onClick={() => setFilter(cat)}
                                 className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${filter === cat
-                                        ? "bg-primary text-black shadow-[0_0_15px_rgba(0,243,255,0.4)]"
-                                        : "bg-white/5 text-gray-300 hover:bg-white/10 border border-white/10"
+                                    ? "bg-primary text-black shadow-[0_0_15px_rgba(0,243,255,0.4)]"
+                                    : "bg-white/5 text-gray-300 hover:bg-white/10 border border-white/10"
                                     }`}
                             >
                                 {cat}
