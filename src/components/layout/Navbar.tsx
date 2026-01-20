@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { Menu, X, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -22,9 +23,14 @@ export function Navbar() {
                 <div className="flex items-center justify-between h-16">
                     {/* Logo */}
                     <Link href="/" className="flex items-center space-x-2 group">
-                        <div className="relative">
-                            <div className="absolute -inset-1 bg-primary rounded-full blur opacity-50 group-hover:opacity-100 transition duration-200"></div>
-                            <Zap className="relative w-8 h-8 text-primary" />
+                        <div className="relative w-12 h-12">
+                            <Image
+                                src="/logo.png"
+                                alt="PSSC Logo"
+                                fill
+                                className="object-contain"
+                                priority
+                            />
                         </div>
                         <span className="text-xl font-bold tracking-wider text-white group-hover:text-primary transition-colors duration-200">
                             PSSC
